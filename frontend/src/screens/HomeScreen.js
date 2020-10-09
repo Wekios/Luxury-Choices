@@ -1,6 +1,6 @@
 import React from "react";
 
-import Product from "../components/Product";
+import Product from "components/Product";
 import { Col, Row } from "react-bootstrap";
 import products from "../products";
 

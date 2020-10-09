@@ -2,13 +2,18 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const Rating = ({ value, text, starColor = "#f8e825" }) => {
-  const stars = [];
-
-  for (let i = 1; i <= 5; i++) {
-    stars.push(
-      <Star key={i} value={value} max={i} half={i - 0.5} color={starColor} />
-    );
-  }
+  const stars = [1, 2, 3, 4, 5].map((index) => (
+    <i
+      style={{ color: starColor }}
+      className={
+        value >= index
+          ? "fas fa-star"
+          : value >= index - 0.5
+          ? "fas fa-star-half-alt"
+          : "far fa-star"
+      }
+    ></i>
+  ));
 
   return (
     <div className="rating">
@@ -24,18 +29,3 @@ Rating.propTypes = {
 };
 
 export default Rating;
-
-const Star = ({ value, max, half, color }) => {
-  return (
-    <i
-      style={{ color }}
-      className={
-        value >= max
-          ? "fas fa-star"
-          : value >= half
-          ? "fas fa-star-half-alt"
-          : "far fa-star"
-      }
-    ></i>
-  );
-};
