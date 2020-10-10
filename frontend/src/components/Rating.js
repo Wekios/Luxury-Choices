@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 const Rating = ({ value, text, starColor = "#f8e825" }) => {
   const stars = [1, 2, 3, 4, 5].map((index) => (
     <i
+      key={index}
       style={{ color: starColor }}
       className={
         value >= index
