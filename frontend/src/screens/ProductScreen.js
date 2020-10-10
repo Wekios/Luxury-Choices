@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Link } from "react-router-dom";
 import {
@@ -10,21 +10,34 @@ import {
   ListGroupItem,
   Card,
   Button,
+  Form,
 } from "react-bootstrap";
 import Rating from "components/Rating";
+import { listProductDetails } from "store/actions";
+import Loader from "components/Loader";
+import Message from "components/Message";
 
-const ProductScreen = ({ match }) => {
-  const [product, setProduct] = useState({});
+const ProductScreen = ({ history, match }) => {
+  const [quantity, setQuantity] = useState(0);
+  const dispatch = useDispatch();
+
+  const { product, loading, error } = useSelector(
+    (state) => state.productDetails
+  );
 
   useEffect(() => {
-    async function fetchProduct() {
-      const { data } = await axios.get(`/api/products/${match.params.id}`);
-      setProduct(data);
-    }
-    fetchProduct();
-  }, [match.params.id]);
+    dispatch(listProductDetails(match.params.id));
+  }, [dispatch, match.params.id]);
+
+  const addToCartHandler = () => {
+    history.push(`/cart/${match.params.id}?qty=${quantity}`);
+  };
 
   const isProductInStock = !!product.countInStock;
+
+  if (loading) return <Loader>Loading...</Loader>;
+
+  if (error) return <Message variant="danger">{error}</Message>;
 
   return (
     <>
@@ -43,7 +56,7 @@ const ProductScreen = ({ match }) => {
             <ListGroupItem>
               <Rating
                 value={product.rating}
-                text={`${product.numReviews} reviews`}
+                text={`${product.nrOfReviews} reviews`}
               />
             </ListGroupItem>
             <ListGroupItem>Price: {product.price}</ListGroupItem>
@@ -68,8 +81,27 @@ const ProductScreen = ({ match }) => {
                   <Col>{isProductInStock ? "In Stock" : "Out of Stock"}</Col>
                 </Row>
               </ListGroupItem>
+
+              {isProductInStock && (
+                <ListGroupItem>
+                  <Row>
+                    <Col>Quantity</Col>
+                    <Col>
+                      <Form.Control
+                        as="select"
+                        value={quantity}
+                        onChange={(e) => setQuantity(e.target.value)}
+                      >
+                        <QuantityControl quantity={product.countInStock} />
+                      </Form.Control>
+                    </Col>
+                  </Row>
+                </ListGroupItem>
+              )}
+
               <ListGroupItem>
                 <Button
+                  onClick={addToCartHandler}
                   className="btn-block"
                   type="button"
                   disabled={!isProductInStock}
@@ -83,6 +115,19 @@ const ProductScreen = ({ match }) => {
       </Row>
     </>
   );
+};
+
+const QuantityControl = ({ quantity }) => {
+  let options = [];
+  for (let i = 1; i <= quantity; i++) {
+    options.push(
+      <option key={i} value={i}>
+        {i}
+      </option>
+    );
+  }
+
+  return options;
 };
 
 export default ProductScreen;
