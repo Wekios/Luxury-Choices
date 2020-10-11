@@ -10,15 +10,15 @@ import {
   ListGroupItem,
   Card,
   Button,
-  Form,
 } from "react-bootstrap";
 import Rating from "components/Rating";
-import { listProductDetails } from "store/actions";
 import Loader from "components/Loader";
+import QuantityControl from "components/QuantityControl";
 import Message from "components/Message";
+import { listProductDetails, addToCart } from "store/actions";
 
 const ProductScreen = ({ history, match }) => {
-  const [quantity, setQuantity] = useState(0);
+  const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
 
   const { product, loading, error } = useSelector(
@@ -30,14 +30,15 @@ const ProductScreen = ({ history, match }) => {
   }, [dispatch, match.params.id]);
 
   const addToCartHandler = () => {
-    history.push(`/cart/${match.params.id}?qty=${quantity}`);
+    dispatch(addToCart(product._id, quantity));
+    history.push("/cart");
   };
-
-  const isProductInStock = !!product.countInStock;
 
   if (loading) return <Loader>Loading...</Loader>;
 
   if (error) return <Message variant="danger">{error}</Message>;
+
+  const isProductInStock = !!product.countInStock;
 
   return (
     <>
@@ -53,12 +54,14 @@ const ProductScreen = ({ history, match }) => {
             <ListGroupItem>
               <h2>{product.name}</h2>
             </ListGroupItem>
-            <ListGroupItem>
-              <Rating
-                value={product.rating}
-                text={`${product.nrOfReviews} reviews`}
-              />
-            </ListGroupItem>
+            {product.rating && (
+              <ListGroupItem>
+                <Rating
+                  value={product.rating}
+                  text={`${product.nrOfReviews} reviews`}
+                />
+              </ListGroupItem>
+            )}
             <ListGroupItem>Price: {product.price}</ListGroupItem>
             <ListGroupItem>Description: {product.description}</ListGroupItem>
           </ListGroup>
@@ -87,13 +90,11 @@ const ProductScreen = ({ history, match }) => {
                   <Row>
                     <Col>Quantity</Col>
                     <Col>
-                      <Form.Control
-                        as="select"
-                        value={quantity}
-                        onChange={(e) => setQuantity(e.target.value)}
-                      >
-                        <QuantityControl quantity={product.countInStock} />
-                      </Form.Control>
+                      <QuantityControl
+                        countInStock={product.countInStock}
+                        quantity={quantity}
+                        onChangeQuantity={(value) => setQuantity(value)}
+                      />
                     </Col>
                   </Row>
                 </ListGroupItem>
@@ -115,19 +116,6 @@ const ProductScreen = ({ history, match }) => {
       </Row>
     </>
   );
-};
-
-const QuantityControl = ({ quantity }) => {
-  let options = [];
-  for (let i = 1; i <= quantity; i++) {
-    options.push(
-      <option key={i} value={i}>
-        {i}
-      </option>
-    );
-  }
-
-  return options;
 };
 
 export default ProductScreen;
