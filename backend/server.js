@@ -3,19 +3,22 @@ import dotenv from "dotenv";
 import "colors";
 import connectDB from "./config/db.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
-import { productRoutes } from "./routes/productRoutes.js";
+import { productRoutes, userRoutes } from "./routes/index.js";
 
-dotenv.config();
+dotenv.config(); // * This gives access to the ENV variables by using dotenv package
 
 connectDB();
 
 const app = express();
 
-app.get("/", (req, res) => {
-  res.send("AAA");
+app.use(express.json()); // * Allows us to accept JSON data in the body
+
+app.get("/", (_req, res) => {
+  res.send("API is running");
 });
 
 app.use("/api/products", productRoutes);
+app.use("/api/users", userRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

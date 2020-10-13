@@ -18,7 +18,7 @@ const Rating = ({ value, text, starColor = "#f8e825" }) => {
 
   return (
     <div className="rating">
-      <span>{stars}</span> <span>{text && text}</span>
+      <span>{stars}</span> <span>{text}</span>
     </div>
   );
 };
