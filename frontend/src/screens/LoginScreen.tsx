@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
+import { IRootState } from "store/store";
 
 import { login } from "store/actions";
-import Message from "components/Message";
-import Loader from "components/Loader";
-import FormContainer from "components/FormContainer";
+import { Message } from "components/Message";
+import { Loader } from "components/Loader";
+import { FormContainer } from "components/FormContainer";
 
-function LoginScreen({ location, history }) {
+export function LoginScreen({ location, history }: RouteComponentProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const dispatch = useDispatch();
 
-  const { loading, error, userInfo } = useSelector((state) => state.userLogin);
+  const { loading, error, userInfo } = useSelector(
+    (state: IRootState) => state.userLogin
+  );
 
   const redirect = location.search ? location.search.split("=")[1] : "/";
 
@@ -24,7 +27,7 @@ function LoginScreen({ location, history }) {
     }
   }, [history, userInfo, redirect]);
 
-  const submitHandler = (e) => {
+  const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(login(email, password));
   };

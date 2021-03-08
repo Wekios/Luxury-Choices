@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { RouteComponentProps } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { IRootState } from "store/store";
 
 import { Link } from "react-router-dom";
 import {
@@ -11,18 +13,21 @@ import {
   Card,
   Button,
 } from "react-bootstrap";
-import Rating from "components/Rating";
-import Loader from "components/Loader";
-import QuantityControl from "components/QuantityControl";
-import Message from "components/Message";
+import { Rating } from "components/Rating";
+import { Loader } from "components/Loader";
+import { QuantityControl } from "components/QuantityControl";
+import { Message } from "components/Message";
 import { listProductDetails, addToCart } from "store/actions";
 
-const ProductScreen = ({ history, match }) => {
+export function ProductScreen({
+  history,
+  match,
+}: RouteComponentProps<{ id: string }>) {
   const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
 
   const { product, loading, error } = useSelector(
-    (state) => state.productDetails
+    (state: IRootState) => state.productDetails
   );
 
   useEffect(() => {
@@ -116,6 +121,4 @@ const ProductScreen = ({ history, match }) => {
       </Row>
     </>
   );
-};
-
-export default ProductScreen;
+}

@@ -15,15 +15,25 @@ const reducer = combineReducers({
   userLogin: userLoginReducer,
 });
 
-const cartItemsFromStorage = localStorage.getItem("cartItems")
-  ? JSON.parse(localStorage.getItem("cartItems"))
-  : [];
+function getFromStorage<T>(key: string, fallback: T): string | T {
+  let items = localStorage.getItem(key);
+  if (items) return JSON.parse(items);
+  else return fallback;
+}
 
-const userInfoFromStorage = localStorage.getItem("userInfo")
-  ? JSON.parse(localStorage.getItem("userInfo"))
-  : null;
+const cartItemsFromStorage = getFromStorage<[]>("cartItems", []);
+const userInfoFromStorage = getFromStorage<null>("userInfo", null);
 
-const initialState = {
+export interface IRootState {
+  productList: any;
+  productDetails: any;
+  cart: any;
+  userLogin: any;
+}
+
+const initialState: IRootState = {
+  productList: {},
+  productDetails: {},
   cart: { cartItems: cartItemsFromStorage },
   userLogin: { userInfo: userInfoFromStorage },
 };

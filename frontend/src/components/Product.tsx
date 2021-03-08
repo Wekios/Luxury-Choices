@@ -1,10 +1,18 @@
-import React from "react";
-
+import { IProduct } from "model/product";
 import { Link } from "react-router-dom";
 import { Card } from "react-bootstrap";
-import Rating from "./Rating";
+import { Rating } from "./Rating";
 
-const Product = ({ _id, image, name, rating, nrOfReviews, price }) => {
+export interface ProductProps extends IProduct {}
+
+export function Product({
+  _id,
+  image,
+  name,
+  rating,
+  nrOfReviews,
+  price,
+}: ProductProps) {
   return (
     <Card className="my-3 p-3 rounded">
       <Link to={`/product/${_id}`}>
@@ -23,6 +31,4 @@ const Product = ({ _id, image, name, rating, nrOfReviews, price }) => {
       </Card.Body>
     </Card>
   );
-};
-
-export default Product;
+}

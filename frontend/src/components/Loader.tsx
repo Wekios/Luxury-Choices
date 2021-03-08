@@ -1,7 +1,7 @@
 import React from "react";
 import { Spinner } from "react-bootstrap";
 
-function Loader({ children }) {
+export function Loader({ children }: React.PropsWithChildren<{}>) {
   return (
     <Spinner
       animation="border"
@@ -17,5 +17,3 @@ function Loader({ children }) {
     </Spinner>
   );
 }
-
-export default Loader;

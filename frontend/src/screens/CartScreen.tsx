@@ -1,21 +1,21 @@
-import React from "react";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-
-import { Link } from "react-router-dom";
 import { Row, Col, ListGroup, Image, Button, Card } from "react-bootstrap";
-import QuantityControl from "components/QuantityControl";
-import Message from "components/Message";
+import { QuantityControl } from "components/QuantityControl";
+import { Message } from "components/Message";
 import { addToCart, removeFromCart } from "store/actions";
+import { IRootState } from "store/store";
+import { IProduct } from "model/product";
 
-function CartScreen({ history }) {
+export function CartScreen({ history }: RouteComponentProps<any>) {
   const dispatch = useDispatch();
-  const { cartItems } = useSelector((state) => state.cart);
+  const { cartItems } = useSelector((state: IRootState) => state.cart);
 
   const checkoutHandler = () => {
     history.push("/login?redirect=shipping");
   };
 
-  const removeFromCartHandler = (id) => {
+  const removeFromCartHandler = (id: string) => {
     dispatch(removeFromCart(id));
   };
 
@@ -31,7 +31,7 @@ function CartScreen({ history }) {
           </Message>
         ) : (
           <ListGroup variant="flush">
-            {cartItems.map((p) => (
+            {cartItems.map((p: IProduct) => (
               <ListGroup.Item key={p._id}>
                 <Row>
                   <Col md={2}>
@@ -72,12 +72,19 @@ function CartScreen({ history }) {
           <ListGroup variant="flush">
             <ListGroup.Item>
               <h2>
-                Subtotal ({cartItems.reduce((acc, p) => acc + p.quantity, 0)})
-                items
+                Subtotal (
+                {cartItems.reduce(
+                  (acc: number, p: IProduct) => acc + p.quantity,
+                  0
+                )}
+                ) items
               </h2>
               $
               {cartItems
-                .reduce((acc, p) => acc + p.quantity * p.price, 0)
+                .reduce(
+                  (acc: number, p: IProduct) => acc + p.quantity * p.price,
+                  0
+                )
                 .toFixed(2)}
             </ListGroup.Item>
             <ListGroup.Item>
@@ -96,5 +103,3 @@ function CartScreen({ history }) {
     </Row>
   );
 }
-
-export default CartScreen;

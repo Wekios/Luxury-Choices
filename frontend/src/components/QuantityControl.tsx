@@ -1,10 +1,19 @@
 import React from "react";
-
 import { Form } from "react-bootstrap";
 
-function QuantityControl({ countInStock, quantity, onChangeQuantity }) {
-  const handleChangeQuantity = (e) => {
-    const newQuantity = +e.target.value;
+export interface QuantityControlProps {
+  countInStock: number;
+  quantity: number;
+  onChangeQuantity: (q: number) => void;
+}
+
+export function QuantityControl({
+  countInStock,
+  quantity,
+  onChangeQuantity,
+}: QuantityControlProps) {
+  const handleChangeQuantity = (e: React.FormEvent<HTMLFormElement>) => {
+    const newQuantity = +e.currentTarget.value;
     if (newQuantity) onChangeQuantity(newQuantity);
     else throw new Error("Quantity not a number");
   };
@@ -16,7 +25,7 @@ function QuantityControl({ countInStock, quantity, onChangeQuantity }) {
   );
 }
 
-function QuantityOptions({ countInStock }) {
+export function QuantityOptions({ countInStock }: { countInStock: number }) {
   let options = [];
   for (let i = 1; i <= countInStock; i++) {
     options.push(
@@ -26,7 +35,5 @@ function QuantityOptions({ countInStock }) {
     );
   }
 
-  return options;
+  return <>{options}</>;
 }
-
-export default QuantityControl;

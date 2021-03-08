@@ -1,7 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const Rating = ({ value, text, starColor = "#f8e825" }) => {
+export interface RatingProps {
+  value: number;
+  text: string;
+  starColor?: string;
+}
+
+export function Rating({ value, text, starColor = "#f8e825" }: RatingProps) {
   const stars = [1, 2, 3, 4, 5].map((index) => (
     <i
       key={index}
@@ -21,12 +27,10 @@ const Rating = ({ value, text, starColor = "#f8e825" }) => {
       <span>{stars}</span> <span>{text}</span>
     </div>
   );
-};
+}
 
 Rating.propTypes = {
   value: PropTypes.number.isRequired,
   text: PropTypes.string.isRequired,
   color: PropTypes.string,
 };
-
-export default Rating;

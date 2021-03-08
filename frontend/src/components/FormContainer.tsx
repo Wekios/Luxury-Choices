@@ -1,7 +1,7 @@
 import React from "react";
 import { Col, Container, Row } from "react-bootstrap";
 
-function FormContainer({ children }) {
+export function FormContainer({ children }: React.PropsWithChildren<{}>) {
   return (
     <Container>
       <Row>
@@ -12,5 +12,3 @@ function FormContainer({ children }) {
     </Container>
   );
 }
-
-export default FormContainer;
