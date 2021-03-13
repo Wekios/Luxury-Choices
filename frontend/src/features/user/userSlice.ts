@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import { User } from "./userModel";
 import { ThunkResult } from "store/store";
 import { getFromStorage, setIntoStorage } from "utils/storage";
 
@@ -14,7 +14,7 @@ interface RequestLogin {
 
 interface RequestLoginSuccess {
   type: typeof USER_LOGIN_SUCCESS;
-  payload: any;
+  payload: User;
 }
 
 interface RequestLoginFail {
@@ -32,11 +32,6 @@ export type UserActions =
   | RequestLoginFail
   | RequestUserLogout;
 
-export interface User {
-  email: string;
-  password: string;
-}
-
 export const login = (
   email: User["email"],
   password: User["password"]
@@ -52,7 +47,7 @@ export const login = (
       },
     };
 
-    const { data } = await axios.post(
+    const { data }: { data: User } = await axios.post(
       "/api/users/login",
       { email, password },
       config

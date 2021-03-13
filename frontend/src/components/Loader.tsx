@@ -1,4 +1,3 @@
-import React from "react";
 import { Spinner } from "react-bootstrap";
 
 export function Loader({ children }: React.PropsWithChildren<{}>) {
