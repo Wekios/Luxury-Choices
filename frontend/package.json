@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "luxury_choices_client_app",
   "proxy": "http://127.0.0.1:5000",
   "version": "0.1.0",
   "private": true,

@@ -6,6 +6,7 @@ import { ProductScreen } from "screens/ProductScreen";
 import { CartScreen } from "screens/CartScreen";
 import { Container } from "react-bootstrap";
 import { LoginScreen } from "screens/LoginScreen";
+import { RegisterScreen } from "screens/RegisterScreen";
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
       <Header />
       <main className="py-3">
         <Container>
+          <Route path="/register" component={RegisterScreen} />
           <Route path="/login" component={LoginScreen} />
           <Route path="/product/:id" component={ProductScreen} />
           <Route path="/cart/:id?" component={CartScreen} />

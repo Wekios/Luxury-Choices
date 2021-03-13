@@ -12,3 +12,7 @@ export function getFromStorage<T>(key: string, fallback: T): T {
     return fallback;
   }
 }
+
+export function removeFromStorage(key: string): void {
+  localStorage.removeItem(key);
+}
