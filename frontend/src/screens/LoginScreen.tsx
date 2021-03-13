@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { IRootState } from "store/store";
+import { RootState } from "store/store";
 
-import { login } from "store/actions";
+import { login } from "features/user";
 import { Message } from "components/Message";
 import { Loader } from "components/Loader";
 import { FormContainer } from "components/FormContainer";
@@ -16,7 +16,7 @@ export function LoginScreen({ location, history }: RouteComponentProps) {
   const dispatch = useDispatch();
 
   const { loading, error, userInfo } = useSelector(
-    (state: IRootState) => state.userLogin
+    (state: RootState) => state.user
   );
 
   const redirect = location.search ? location.search.split("=")[1] : "/";

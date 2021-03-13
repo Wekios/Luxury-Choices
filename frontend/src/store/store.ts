@@ -1,49 +1,30 @@
-import { createStore, combineReducers, applyMiddleware } from "redux";
-import thunk from "redux-thunk";
+import { createStore, combineReducers, applyMiddleware, Action } from "redux";
+import thunk, { ThunkAction } from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
-import {
-  productListReducer,
-  productDetailsReducer,
-  cartReducer,
-  userLoginReducer,
-} from "store/reducers";
+import { productListReducer, productDetailsReducer } from "features/product";
+import { cartReducer } from "features/cart";
+import { userReducer } from "features/user";
 
 const reducer = combineReducers({
   productList: productListReducer,
   productDetails: productDetailsReducer,
   cart: cartReducer,
-  userLogin: userLoginReducer,
+  user: userReducer,
 });
 
-function getFromStorage<T>(key: string, fallback: T): string | T {
-  let items = localStorage.getItem(key);
-  if (items) return JSON.parse(items);
-  else return fallback;
-}
+export type RootState = ReturnType<typeof reducer>;
 
-const cartItemsFromStorage = getFromStorage<[]>("cartItems", []);
-const userInfoFromStorage = getFromStorage<null>("userInfo", null);
-
-export interface IRootState {
-  productList: any;
-  productDetails: any;
-  cart: any;
-  userLogin: any;
-}
-
-const initialState: IRootState = {
-  productList: {},
-  productDetails: {},
-  cart: { cartItems: cartItemsFromStorage },
-  userLogin: { userInfo: userInfoFromStorage },
-};
+export type ThunkResult<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  Action<string>
+>;
 
 const middleware = [thunk];
 
-const store = createStore(
+export const store = createStore(
   reducer,
-  initialState,
+  {},
   composeWithDevTools(applyMiddleware(...middleware))
 );
-
-export default store;

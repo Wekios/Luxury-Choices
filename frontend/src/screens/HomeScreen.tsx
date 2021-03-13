@@ -1,22 +1,19 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { IRootState } from "store/store";
-import { IProduct } from "model/product";
-
-import { listProducts } from "store/actions";
-import { Product } from "components/Product";
 import { Col, Row } from "react-bootstrap";
+import { RootState } from "store/store";
+import { ProductCard, IProduct, fetchProductList } from "features/product";
 import { Loader } from "components/Loader";
 import { Message } from "components/Message";
 
 export function HomeScreen() {
   const dispatch = useDispatch();
   const { loading, error, products } = useSelector(
-    (state: IRootState) => state.productList
+    (state: RootState) => state.productList
   );
 
   useEffect(() => {
-    dispatch(listProducts());
+    dispatch(fetchProductList());
   }, [dispatch]);
 
   let content;
@@ -28,9 +25,9 @@ export function HomeScreen() {
   } else {
     content = (
       <Row>
-        {products?.map((product: IProduct) => (
+        {products.map((product: IProduct) => (
           <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
-            <Product {...product} />
+            <ProductCard {...product} />
           </Col>
         ))}
       </Row>

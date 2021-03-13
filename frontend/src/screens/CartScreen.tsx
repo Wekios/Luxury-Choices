@@ -1,21 +1,36 @@
 import { Link, RouteComponentProps } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Row, Col, ListGroup, Image, Button, Card } from "react-bootstrap";
+import {
+  Row,
+  Col,
+  Card,
+  Form,
+  Image,
+  Button,
+  ListGroup,
+} from "react-bootstrap";
 import { QuantityControl } from "components/QuantityControl";
 import { Message } from "components/Message";
-import { addToCart, removeFromCart } from "store/actions";
-import { IRootState } from "store/store";
-import { IProduct } from "model/product";
+import { RootState } from "store/store";
+import { IProduct } from "features/product";
+import { addToCart, removeFromCart } from "features/cart";
 
 export function CartScreen({ history }: RouteComponentProps<any>) {
   const dispatch = useDispatch();
-  const { cartItems } = useSelector((state: IRootState) => state.cart);
+  const { cartItems } = useSelector((state: RootState) => state.cart);
 
   const checkoutHandler = () => {
     history.push("/login?redirect=shipping");
   };
 
-  const removeFromCartHandler = (id: string) => {
+  const handleChangeQuantity = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: IProduct["_id"]
+  ) => {
+    dispatch(addToCart(id, +e.currentTarget.value));
+  };
+
+  const handleRemoveFromCart = (id: IProduct["_id"]) => {
     dispatch(removeFromCart(id));
   };
 
@@ -42,23 +57,23 @@ export function CartScreen({ history }: RouteComponentProps<any>) {
                   </Col>
                   <Col md={2}>${p.price}</Col>
                   <Col>
-                    <QuantityControl
-                      {...{
-                        quantity: p.quantity,
-                        countInStock: p.countInStock,
-                        onChangeQuantity: (value) =>
-                          dispatch(addToCart(p._id, value)),
-                      }}
-                    />
+                    <Form.Control
+                      as="select"
+                      custom
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        handleChangeQuantity(e, p._id)
+                      }
+                    >
+                      <QuantityControl countInStock={p.countInStock} />
+                    </Form.Control>
                   </Col>
                   <Col md={2}>
                     <Button
                       type="button"
                       variant="light"
-                      onClick={() => removeFromCartHandler(p._id)}
+                      onClick={() => handleRemoveFromCart(p._id)}
                     >
-                      <i className="fas fa-trash"></i>
-                      Remove
+                      <i className="fas fa-trash"></i> Remove
                     </Button>
                   </Col>
                 </Row>

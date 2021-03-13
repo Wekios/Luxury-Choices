@@ -1,18 +1,16 @@
-import { IProduct } from "model/product";
+import { IProduct } from "./productModel";
 import { Link } from "react-router-dom";
 import { Card } from "react-bootstrap";
-import { Rating } from "./Rating";
+import { Rating } from "../../components/Rating";
 
-export interface ProductProps extends IProduct {}
-
-export function Product({
+export function ProductCard({
   _id,
   image,
   name,
   rating,
   nrOfReviews,
   price,
-}: ProductProps) {
+}: IProduct) {
   return (
     <Card className="my-3 p-3 rounded">
       <Link to={`/product/${_id}`}>

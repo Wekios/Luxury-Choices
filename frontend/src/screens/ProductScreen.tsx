@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { IRootState } from "store/store";
-
+import { RootState } from "store/store";
 import { Link } from "react-router-dom";
 import {
   Row,
@@ -12,12 +11,14 @@ import {
   ListGroupItem,
   Card,
   Button,
+  Form,
 } from "react-bootstrap";
 import { Rating } from "components/Rating";
 import { Loader } from "components/Loader";
 import { QuantityControl } from "components/QuantityControl";
 import { Message } from "components/Message";
-import { listProductDetails, addToCart } from "store/actions";
+import { fetchProduct } from "features/product";
+import { addToCart } from "features/cart";
 
 export function ProductScreen({
   history,
@@ -27,23 +28,28 @@ export function ProductScreen({
   const dispatch = useDispatch();
 
   const { product, loading, error } = useSelector(
-    (state: IRootState) => state.productDetails
+    (state: RootState) => state.productDetails
   );
 
   useEffect(() => {
-    dispatch(listProductDetails(match.params.id));
+    dispatch(fetchProduct(match.params.id));
   }, [dispatch, match.params.id]);
+
+  if (loading) return <Loader>Loading...</Loader>;
+
+  if (error || !product) return <Message variant="danger">{error}</Message>;
 
   const addToCartHandler = () => {
     dispatch(addToCart(product._id, quantity));
     history.push("/cart");
   };
 
-  if (loading) return <Loader>Loading...</Loader>;
+  const handleChangeQuantity = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuantity = +e.currentTarget.value;
+    setQuantity(newQuantity);
+  };
 
-  if (error) return <Message variant="danger">{error}</Message>;
-
-  const isProductInStock = !!product.countInStock;
+  const isProductInStock = product.countInStock >= 1;
 
   return (
     <>
@@ -92,16 +98,26 @@ export function ProductScreen({
 
               {isProductInStock && (
                 <ListGroupItem>
-                  <Row>
-                    <Col>Quantity</Col>
-                    <Col>
-                      <QuantityControl
-                        countInStock={product.countInStock}
-                        quantity={quantity}
-                        onChangeQuantity={(value) => setQuantity(value)}
-                      />
-                    </Col>
-                  </Row>
+                  <Form>
+                    <Form.Group controlId="quantity-select">
+                      <Form.Row className="align-items-center">
+                        <Col>
+                          <Form.Label>Quantity</Form.Label>
+                        </Col>
+                        <Col>
+                          <Form.Control
+                            as="select"
+                            custom
+                            onChange={handleChangeQuantity}
+                          >
+                            <QuantityControl
+                              countInStock={product.countInStock}
+                            />
+                          </Form.Control>
+                        </Col>
+                      </Form.Row>
+                    </Form.Group>
+                  </Form>
                 </ListGroupItem>
               )}
 
