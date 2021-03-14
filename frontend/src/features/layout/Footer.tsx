@@ -1,4 +1,3 @@
-import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 
 export function Footer() {
@@ -6,7 +5,7 @@ export function Footer() {
     <footer>
       <Container>
         <Row>
-          <Col className="text-center py-3">Copyright &copy; ProShop</Col>
+          <Col className="text-center py-3">Copyright &copy; Wekios</Col>
         </Row>
       </Container>
     </footer>

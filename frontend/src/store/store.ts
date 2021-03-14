@@ -4,6 +4,7 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import { productListReducer, productDetailsReducer } from "features/product";
 import { cartReducer } from "features/cart";
 import { userReducer } from "features/user";
+import { callAPIMiddleware } from "./middleware";
 
 const reducer = combineReducers({
   productList: productListReducer,
@@ -21,7 +22,7 @@ export type ThunkResult<ReturnType = void> = ThunkAction<
   Action<string>
 >;
 
-const middleware = [thunk];
+const middleware = [thunk, callAPIMiddleware];
 
 export const store = createStore(
   reducer,

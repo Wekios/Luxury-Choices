@@ -7,6 +7,8 @@ import {
   removeFromStorage,
 } from "utils/storage";
 import { Dispatch } from "redux";
+import { GenericRequest, GenericFail, GenericSuccess } from "types/types";
+import { CallAPIMiddlewareAction } from "store/middleware";
 
 export const USER_REGISTER_REQUEST = "USER_REGISTER_REQUEST";
 export const USER_REGISTER_SUCCESS = "USER_REGISTER_SUCCESS";
@@ -20,116 +22,40 @@ export const USER_DETAILS_REQUEST = "USER_DETAILS_REQUEST";
 export const USER_DETAILS_SUCCESS = "USER_DETAILS_SUCCESS";
 export const USER_DETAILS_FAIL = "USER_DETAILS_FAIL";
 
-export const USER_UPDATE_PROFILE_REQUEST = "USER_UPDATE_PROFILE_REQUEST";
-export const USER_UPDATE_PROFILE_SUCCESS = "USER_UPDATE_PROFILE_SUCCESS";
-export const USER_UPDATE_PROFILE_FAIL = "USER_UPDATE_PROFILE_FAIL";
-export const USER_UPDATE_PROFILE_RESET = "USER_UPDATE_PROFILE_RESET";
-
-interface RequestRegister {
-  type: typeof USER_REGISTER_REQUEST;
-}
-interface RequestRegisterSuccess {
-  type: typeof USER_REGISTER_SUCCESS;
-  payload: User;
-}
-interface RequestRegisterFail {
-  type: typeof USER_REGISTER_FAIL;
-  payload: string;
-}
-interface RequestLogin {
-  type: typeof USER_LOGIN_REQUEST;
-}
-interface RequestLoginSuccess {
-  type: typeof USER_LOGIN_SUCCESS;
-  payload: User;
-}
-interface RequestLoginFail {
-  type: typeof USER_LOGIN_FAIL;
-  payload: string;
-}
-interface RequestUserLogout {
-  type: typeof USER_LOGOUT;
-}
-interface RequestUserDetails {
-  type: typeof USER_DETAILS_REQUEST;
-}
-interface RequestUserDetailsSuccess {
-  type: typeof USER_DETAILS_SUCCESS;
-  payload: User;
-}
-interface RequestUserDetailsFail {
-  type: typeof USER_DETAILS_FAIL;
-  payload: string;
-}
-
-interface RequestUpdateUserDetails {
-  type: typeof USER_UPDATE_PROFILE_REQUEST;
-}
-interface RequestUpdateUserDetailsSuccess {
-  type: typeof USER_UPDATE_PROFILE_SUCCESS;
-  payload: User;
-}
-interface RequestUpdateUserDetailsFail {
-  type: typeof USER_UPDATE_PROFILE_FAIL;
-  payload: string;
-}
-interface RequestUpdateUserDetailsReset {
-  type: typeof USER_UPDATE_PROFILE_RESET;
-}
+export const USER_UPDATE_DETAILS_REQUEST = "USER_UPDATE_DETAILS_REQUEST";
+export const USER_UPDATE_DETAILS_SUCCESS = "USER_UPDATE_DETAILS_SUCCESS";
+export const USER_UPDATE_DETAILS_FAIL = "USER_UPDATE_DETAILS_FAIL";
+export const USER_UPDATE_DETAILS_RESET = "USER_UPDATE_DETAILS_RESET";
 
 export type UserActions =
-  | RequestRegister
-  | RequestRegisterSuccess
-  | RequestRegisterFail
-  | RequestLogin
-  | RequestLoginSuccess
-  | RequestLoginFail
-  | RequestUserLogout
-  | RequestUserDetails
-  | RequestUserDetailsSuccess
-  | RequestUserDetailsFail
-  | RequestUpdateUserDetails
-  | RequestUpdateUserDetailsSuccess
-  | RequestUpdateUserDetailsFail
-  | RequestUpdateUserDetailsReset;
+  | GenericRequest<typeof USER_REGISTER_REQUEST>
+  | GenericSuccess<typeof USER_REGISTER_SUCCESS, User>
+  | GenericFail<typeof USER_REGISTER_FAIL, string>
+  | GenericRequest<typeof USER_LOGIN_REQUEST>
+  | GenericSuccess<typeof USER_LOGIN_SUCCESS, User>
+  | GenericFail<typeof USER_LOGIN_FAIL, string>
+  | GenericRequest<typeof USER_LOGOUT>
+  | GenericRequest<typeof USER_DETAILS_REQUEST>
+  | GenericSuccess<typeof USER_DETAILS_SUCCESS, User>
+  | GenericFail<typeof USER_DETAILS_FAIL, string>
+  | GenericRequest<typeof USER_UPDATE_DETAILS_REQUEST>
+  | GenericSuccess<typeof USER_UPDATE_DETAILS_SUCCESS, User>
+  | GenericFail<typeof USER_UPDATE_DETAILS_FAIL, string>
+  | GenericRequest<typeof USER_UPDATE_DETAILS_RESET>;
 
-export const login = (
+export function login(
   email: User["email"],
   password: User["password"]
-): ThunkResult => async (dispatch) => {
-  try {
-    dispatch({
-      type: USER_LOGIN_REQUEST,
-    });
-
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    const { data }: { data: User } = await axios.post(
-      "/api/users/login",
-      { email, password },
-      config
-    );
-
-    dispatch({
-      type: USER_LOGIN_SUCCESS,
-      payload: data,
-    });
-
-    setIntoStorage("userInfo", data);
-  } catch (error) {
-    dispatch({
-      type: USER_LOGIN_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
-    });
-  }
-};
+): Omit<CallAPIMiddlewareAction, "type"> {
+  return {
+    types: [USER_LOGIN_REQUEST, USER_LOGIN_SUCCESS, USER_LOGIN_FAIL],
+    callAPI: () =>
+      axios.post<User>(`/api/users/login`, {
+        email,
+        password,
+      }),
+  };
+}
 
 export const logout = () => (dispatch: Dispatch) => {
   removeFromStorage("userInfo");
@@ -146,17 +72,11 @@ export const register = (
       type: USER_REGISTER_REQUEST,
     });
 
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    const { data }: { data: User } = await axios.post(
-      "/api/users",
-      { name, email, password },
-      config
-    );
+    const { data }: { data: User } = await axios.post("/api/users", {
+      name,
+      email,
+      password,
+    });
 
     dispatch({
       type: USER_REGISTER_SUCCESS,
@@ -223,14 +143,13 @@ export const updateUserProfile = (user: User): ThunkResult => async (
 ) => {
   try {
     dispatch({
-      type: USER_UPDATE_PROFILE_REQUEST,
+      type: USER_UPDATE_DETAILS_REQUEST,
     });
 
     const { userInfo } = getState().user;
 
     const config = {
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${userInfo?.token}`,
       },
     };
@@ -242,12 +161,12 @@ export const updateUserProfile = (user: User): ThunkResult => async (
     );
 
     dispatch({
-      type: USER_UPDATE_PROFILE_SUCCESS,
+      type: USER_UPDATE_DETAILS_SUCCESS,
       payload: data,
     });
   } catch (error) {
     dispatch({
-      type: USER_UPDATE_PROFILE_FAIL,
+      type: USER_UPDATE_DETAILS_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
@@ -258,7 +177,7 @@ export const updateUserProfile = (user: User): ThunkResult => async (
 
 export const updateProfileReset = () => {
   store.dispatch({
-    type: USER_UPDATE_PROFILE_RESET,
+    type: USER_UPDATE_DETAILS_RESET,
   });
 };
 
@@ -302,18 +221,18 @@ export const userReducer = (
     case USER_DETAILS_FAIL:
       return { ...state, loading: false, error: action.payload };
 
-    case USER_UPDATE_PROFILE_REQUEST:
+    case USER_UPDATE_DETAILS_REQUEST:
       return { ...state, loading: true, error: "" };
-    case USER_UPDATE_PROFILE_SUCCESS:
+    case USER_UPDATE_DETAILS_SUCCESS:
       return {
         ...state,
         loading: false,
         isProfileUpdated: true,
         userInfo: action.payload,
       };
-    case USER_UPDATE_PROFILE_FAIL:
+    case USER_UPDATE_DETAILS_FAIL:
       return { ...state, loading: false, error: action.payload };
-    case USER_UPDATE_PROFILE_RESET:
+    case USER_UPDATE_DETAILS_RESET:
       return { ...state, isProfileUpdated: false };
 
     default:
