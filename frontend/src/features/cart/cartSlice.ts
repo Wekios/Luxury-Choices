@@ -66,7 +66,6 @@ export const cartReducer = (
     case CART_ADD_ITEM:
       const addedProduct = action.payload;
 
-      // TODO: Think about refactoring this
       const productAlreadyInCart = state.cartItems.find(
         (p) => p._id === addedProduct._id
       );

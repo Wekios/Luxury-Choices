@@ -48,13 +48,11 @@ export const fetchProductList = (): ThunkResult => async (dispatch) => {
   }
 };
 
-export interface ProductList {
+export const productListState: {
   products: IProduct[];
   loading: boolean;
   error: string;
-}
-
-export const productListState: ProductList = {
+} = {
   products: [],
   loading: false,
   error: "",
@@ -63,7 +61,7 @@ export const productListState: ProductList = {
 export const productListReducer = (
   state = productListState,
   action: ProductListActions
-): ProductList => {
+): typeof productListState => {
   switch (action.type) {
     case PRODUCT_LIST_REQUEST:
       return {
